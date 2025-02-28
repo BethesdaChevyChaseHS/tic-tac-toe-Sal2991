@@ -42,7 +42,28 @@ public class GameDisplay extends ScreenAdapter {
     public GameDisplay(TicTacToe game) {
         //set up the screen you you like
         
-        
+         //set up the screen you you like
+        this.game = game;
+        this.stage = new Stage();
+        Gdx.input.setInputProcessor(stage);
+
+        skin = new Skin(Gdx.files.internal("skins/glassy/glassy-ui.json"));
+        Texture backgroundTexture = new Texture(Gdx.files.internal("space_tictactoe.png"));
+        //TextureRegionDrawable backgroundDrawable =
+        //        new TextureRegionDrawable(new TextureRegion(backgroundTexture));
+
+        Image backgroundImage = new Image(backgroundTexture);
+        backgroundImage.setFillParent(true);
+        stage.addActor(backgroundImage);
+
+        curPlayerDisplay = Constants.createLabelWithBackgrounColor("Current Player is X", Color.TEAL, skin);
+        curPlayerDisplay.setPosition(150,400);
+        curPlayerDisplay.pack();
+        stage.addActor(curPlayerDisplay);
+
+
+        game.setBoardState(new Board());
+
         initTableDisplay();
         updateBoardDisplay();
     }
@@ -82,26 +103,56 @@ public class GameDisplay extends ScreenAdapter {
     }
 
     
-    public void handleBoardClick(int row, int col) {
+     public void handleBoardClick(int row, int col) {
         //checkpoint 2
         //this position was clicked, play the move, then call handle move made
+        if (!gameOver) {
+            if (game.getBoardState().makeMove(row, col, game.getCurPlayerMark())) {
+                handleMoveMade();
+            }
+        }
     }
 
-    public void handleMoveMade(){//checkpoint 2
-        //call updateBoardDisplay
-        //check for a win or tie. If there is one, call showResult() with a message containing the winner, and update the player stats. 
-       
+    public void handleMoveMade() { //checkpoint 2
+        // Call updateBoardDisplay
+        updateBoardDisplay();
+
+        // Check for a win or tie. If there is one, call showResult() with a message containing the winner, and update the player stats.
+        Mark winner = game.getBoardState().checkWin();
+        if (winner != null) {
+            if (winner == Mark.TIE) {
+                showResult("It's a Tie!");
+            } else {
+                showResult("Player " + (winner == Mark.X ? "1" : "2") + " Wins!");
+            }
+            gameOver = true;
+        } else {
+            game.nextPlayer();
+        }
 
         //checkpoint 3 modification
         //if game is simulated, instead of having a popup by calling showresult, start the next game if we have not run all the simulations
-        
     }
 
     private void showResult(String result) {
         // Create an overlay to show the result. Include a button to play again. 
 
         // when the button is clicked, it should dissappear - you can do this using the .remove() command. 
-        
+        resultLabel = new Label(result, skin);
+        resultLabel.setPosition(150, 200);
+        stage.addActor(resultLabel);
+
+        playAgainButton = new TextButton("Play Again", skin);
+        playAgainButton.setPosition(150, 150);
+        playAgainButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                resultLabel.remove();
+                playAgainButton.remove();
+                resetGame();
+            }
+        });
+        stage.addActor(playAgainButton);
     }
     public void resetGame() {
         //update board state, current player, etc. 
