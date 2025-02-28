@@ -33,6 +33,37 @@ public class PlayerSelectionScreen extends ScreenAdapter{
        //add buttons to select from the player types listed in constants.java. If there isSimulated is true, don't let human be an option. 
     
        //curplayer will either be 0 or 1
+       this.game = game;
+        stage = new Stage();
+        Gdx.input.setInputProcessor(stage);
+        skin = new Skin(Gdx.files.internal("skins/glassy/glassy-ui.json"));
+
+        Container<Label> selectLabel = Constants.createLabelWithBackgrounColor("Select Player " + currentPlayer, Color.BLACK, skin);
+        Table table = new Table();
+        table.add(selectLabel).pad(5).row();
+
+        if (!game.getIsSimulated()) {
+            addButton(table, "Human", "human", currentPlayer);
+        }
+
+        addButton(table, "random AI", "random", currentPlayer);
+        addButton(table, "smart AI", "smart", currentPlayer);
+        addButton(table, "smarter AI", "genius", currentPlayer);
+
+        table.setFillParent(true);
+        table.center();
+        stage.addActor(table);
+    }
+
+    private void addButton(Table table, String buttonText, String playerType, int currentPlayer) {
+        TextButton button = new TextButton(buttonText, skin);
+        table.add(button).pad(5).row();
+        button.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                game.setPlayer(currentPlayer, playerType);
+            }
+        });
     }
 
     @Override
