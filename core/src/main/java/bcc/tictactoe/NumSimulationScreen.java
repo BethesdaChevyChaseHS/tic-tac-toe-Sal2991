@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Container;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -32,12 +33,35 @@ public class NumSimulationScreen extends ScreenAdapter {
 
         //checkpoint 3 - add more stuff!
 
+        Texture backgroundTexture = new Texture(Gdx.files.internal("space_tictactoe.png"));
+        Image backgroundImage = new Image(backgroundTexture);
+        backgroundImage.setFillParent(true);
+        stage.addActor(backgroundImage);
+
+        Container<Label> titleLabel = Constants.createLabelWithBackgrounColor("How Many Rounds?", Color.MAROON, skin);
+        titleLabel.setPosition(250, 400);
+        stage.addActor(titleLabel);
+
     
         TextField roundsInput = new TextField("", skin);
-        roundsInput.setMessageText("Enter number of rounds");
+        roundsInput.setMessageText("Enter # of rounds");
        
         stage.addActor(roundsInput);
+
+        TextButton continueButton = new TextButton("Keep going", skin);
+        continueButton.setPosition(180, 0);
+        continueButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x,float y) {
+                int rIn = Integer.parseInt(roundsInput.getText());
+                game.setNumberOfRounds(rIn);
+                System.out.println(game.getRound());
+                game.setScreen(new GameDisplay(game));
+            }
+        });
+        stage.addActor(continueButton);
     }
+
 
     @Override
     public void render(float delta) {

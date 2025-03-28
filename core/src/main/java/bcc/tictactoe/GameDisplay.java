@@ -8,13 +8,11 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Container;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
@@ -180,16 +178,23 @@ public class GameDisplay extends ScreenAdapter {
     }
 
     @Override
-    public void render(float delta) {
+        public void render(float delta) {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         stage.act(delta);
         stage.draw();
 
         //checkpoint 3 - if it is not a humans turn, automate the AI's move here
-        //call handleMoveMade afterwards
+        
+        if(!(gameOver)) {
+            if(!(game.getCurPlayerObj() instanceof Human))  {
+            game.getBoardState().makeMove(game.getCurPlayerObj().makeMove(game.getBoardState(),game.getCurPlayerMark()), game.getCurPlayerMark());
+            handleMoveMade();
+            game.nextPlayer();
+
+            }
     }
 
-    @Override
+    }    @Override
     public void dispose() {
         stage.dispose();
         skin.dispose();

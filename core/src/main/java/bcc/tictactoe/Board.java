@@ -19,7 +19,7 @@ public class Board {
     }
 
     public boolean makeMove(Move move, Mark mark) {
-        return makeMove(move.getRow(), move.getCol(), mark);
+        return makeMove(move.row, move.col, mark);
     }
 
     public boolean makeMove(int row, int col, Mark mark) {
